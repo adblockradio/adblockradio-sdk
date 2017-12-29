@@ -13,9 +13,21 @@ var abrsdk = require("./libabr.js")();
 // https://www.adblockradio.com/player/?t=redactedtokenblahblahcopypasteme&lang=fr
 // Import that token below. With the example link above, the token would be
 // "redactedtokenblahblahcopypasteme".
-var token = "change me";
+var token = "change me or create a token file";
 // Note: Each end user should get a token. A token gives the ability to monitor
 // a limited number of radios at the same time.
+
+var isNode=new Function("try {return this===global;}catch(e){return false;}")();
+if (isNode) {
+	var fs = require("fs");
+	try {
+		token = "" + fs.readFileSync("token");
+		token = token.replace("\n","");
+		console.log("token loaded=|" + token + "|");
+	} catch(e) {
+		console.log("no token found. err=" + e);
+	}
+}
 
 var onConnected = function(err) {
 	if (err) return console.log("connection error: " + err);

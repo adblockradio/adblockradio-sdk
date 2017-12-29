@@ -4,7 +4,14 @@
 
 function abrsdk() {
 	var APIHOSTS_LIST = "https://www.adblockradio.com/api/servers";
-	const io = require("./node_modules/socket.io-client/dist/socket.io.js");
+	var isNode = new Function("try {return this===global;}catch(e){return false;}")(); // detect node or browser env
+
+	if (isNode) {
+		var ioc = require("socket.io-client");
+	} else {
+		var ioc = require("./node_modules/socket.io-client/dist/socket.io.js");
+	}
+
 	var sio;
 	var predictionCallback = null;
 	var statusList = {
@@ -19,17 +26,40 @@ function abrsdk() {
 	}
 	var GAIN_REF = 70;
 	var load = function(path, callback) {
-		var xhttp = new XMLHttpRequest();
-		xhttp.onreadystatechange = function() {
-			if (xhttp.readyState === 4 && xhttp.status === 200) {
-				callback(xhttp.responseText); //, xhttp.getResponseHeader("Content-Type"));
-			}
-		};
-		xhttp.onerror = function (e) {
-			console.log("load: request failed: " + e);
-		};
-		xhttp.open("GET", path, true);
-		xhttp.send();
+		if (isNode) {
+			//console.log("load: node not implemented");
+			//callback(null);
+			(path.slice(0,5) == "https" ? require("https") : require("http")).get(path, (res) => {
+				var statusCode = res.statusCode;
+				var contentType = res.headers['content-type'];
+				var error;
+				if (statusCode !== 200) {
+					console.log("load: path=" + path + " status=" + statusCode);
+					return callback(null);
+				}
+				res.setEncoding('utf8');
+
+				var rawData = '';
+				res.on('data', (chunk) => rawData += chunk);
+				res.on('end', function() {
+					callback(rawData);
+				});
+			}).on('error', (e) => {
+				callback("http request error: " + e.message, null);
+			});
+		} else {
+			var xhttp = new XMLHttpRequest();
+			xhttp.onreadystatechange = function() {
+				if (xhttp.readyState === 4 && xhttp.status === 200) {
+					callback(xhttp.responseText); //, xhttp.getResponseHeader("Content-Type"));
+				}
+			};
+			xhttp.onerror = function (e) {
+				console.log("load: request failed: " + e);
+			};
+			xhttp.open("GET", path, true);
+			xhttp.send();
+		}
 	}
 
 	var getServerList = function(callback) {
@@ -47,7 +77,11 @@ function abrsdk() {
 	}
 
 	var newSocket = function(hosts, ihost, callback) {
-		sio = io(hosts[ihost]);
+		if (isNode) {
+			sio = ioc.connect(hosts[ihost]);
+		} else {
+			sio = ioc(hosts[ihost]);
+		}
 		sio.once("reconnect", function() {
 			console.log("reconnected");
 			newSocket(hosts, ihost, callback);

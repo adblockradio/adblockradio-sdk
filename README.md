@@ -1,5 +1,5 @@
 # Adblock Radio client SDK
-This is a javascript library to connect to adblockradio.com API servers.
+This is a JS Node & browser library to connect to adblockradio.com API servers.
 It provides live information about the nature of broadcast contents: either ads, talk or music.
 It also gives the average volume gain of radio streams so that channel-hopping between stations does not lead to volume variations.
 
@@ -7,15 +7,25 @@ It also gives the average volume gain of radio streams so that channel-hopping b
 ```sh
 $ npm install
 ```
+### Usage in browser:
 The demo script `demo.js` *requires* `libabr.js`. To test it in a browser, you need to use [browserify](http://browserify.org/).
 ```sh
 $ browserify demo.js -o bundle.js
+```
+or
+```sh
+$ npm run build
 ```
 Then launch a local web server at `http://localhost:5000`:
 ```sh
 $ serve -s
 ```
 The demo has no UI, everything happens in the web console (F12 to display it in Firefox & Chrome).
+### Usage in Node:
+Put a valid token in a `token` file. Then:
+```sh
+$ nodejs demo_node.js
+```
 
 ## How to get an API token
 A token is required to use this API. To get one:
