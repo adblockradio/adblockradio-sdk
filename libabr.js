@@ -2,6 +2,8 @@
 // This file is licensed under the MIT licence.
 // See the LICENSE file.
 
+var log = require("./log.js")("abrsdk");
+
 function abrsdk() {
 	var APIHOSTS_LIST = "https://www.adblockradio.com/api/servers";
 	var isNode = new Function("try {return this===global;}catch(e){return false;}")(); // detect node or browser env
@@ -34,7 +36,7 @@ function abrsdk() {
 				var contentType = res.headers['content-type'];
 				var error;
 				if (statusCode !== 200) {
-					console.log("load: path=" + path + " status=" + statusCode);
+					log.warn("load: path=" + path + " status=" + statusCode);
 					return callback(null);
 				}
 				res.setEncoding('utf8');
@@ -55,7 +57,7 @@ function abrsdk() {
 				}
 			};
 			xhttp.onerror = function (e) {
-				console.log("load: request failed: " + e);
+				log.warn("load: request failed: path=" + path + " e=" + e);
 			};
 			xhttp.open("GET", path, true);
 			xhttp.send();
@@ -71,7 +73,7 @@ function abrsdk() {
 				return callback("could not get api servers list: " + e, []);
 			}
 			hosts = hosts.map(item => "https://status." + item)
-			//console.log("hosts: " + JSON.stringify(hosts));
+			//log.debug("hosts: " + JSON.stringify(hosts));
 			callback(null, hosts);
 		});
 	}
@@ -83,19 +85,19 @@ function abrsdk() {
 			sio = ioc(hosts[ihost]);
 		}
 		sio.once("reconnect", function() {
-			console.log("reconnected");
+			log.info("reconnected");
 			newSocket(hosts, ihost, callback);
 		});
 		sio.once("connect", function() {
-			console.log("connected to API host " + hosts[ihost]);
+			log.info("connected to API host " + hosts[ihost]);
 			callback(null);
 		});
 		sio.once("connect_timeout", function() {
-			console.log("connect timeout");
+			log.warn("connect timeout, will attempt to reconnect.");
 			newSocket(hosts, (ihost + 1) % hosts.length, callback);
 		});
 		sio.on("predictions", function(data) {
-			//console.log("predictions: " + JSON.stringify(data));
+			//log.debug("predictions: " + JSON.stringify(data));
 			if (predictionCallback) predictionCallback(data);
 		});
 	}
@@ -106,7 +108,7 @@ function abrsdk() {
 				return callback("connectServer: error: " + err);
 			} else {
 				let ihost = Math.floor(Math.random()*hosts.length); // Math.random() is always < 1
-				//console.log("selected host is " + hosts[ihost]);
+				//log.debug("selected host is " + hosts[ihost]);
 				newSocket(hosts, ihost, callback);
 			}
 		});
@@ -124,7 +126,7 @@ function abrsdk() {
 	var sendPlaylist = function(radios, token, callback) {
 		if (!token) return callback("please provide a token", null);
 
-		console.log("send playlist update");
+		log.info("send playlist update");
 
 		sio.emit("playlist", { names: radios, token: token }, function(msg) {
 			if (msg.error) {
@@ -137,6 +139,7 @@ function abrsdk() {
 
 	var sendFeedback = function(isPositive, feedbackText, token) {
 		if (!token) return false;
+		log.info("send feedback");
 		sio.emit("feedback", {
 			token: token,
 			feedback: {
@@ -150,6 +153,7 @@ function abrsdk() {
 	// - radios is an array of strings of the form COUNTRY_RADIONAME,
 	//   with country and radio names matching entries in www.radio-browser.info
 	var sendFlag = function(radios, token) {
+		log.info("send flag");
 		sio.emit("flag", {
 			token: token,
 			playlist: radios,
