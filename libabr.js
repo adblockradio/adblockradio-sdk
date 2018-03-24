@@ -79,6 +79,9 @@ function abrsdk() {
 	}
 
 	var newSocket = function(hosts, ihost, callback) {
+		if (sio && sio.disconnect) {
+			sio.disconnect();
+		}
 		if (isNode) {
 			sio = ioc.connect(hosts[ihost]);
 		} else {
@@ -86,7 +89,7 @@ function abrsdk() {
 		}
 		sio.once("reconnect", function() {
 			log.info("reconnected");
-			newSocket(hosts, ihost, callback);
+			callback(null);
 		});
 		sio.once("connect", function() {
 			log.info("connected to API host " + hosts[ihost]);
