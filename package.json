@@ -1,6 +1,6 @@
 {
   "name": "adblockradio-sdk",
-  "version": "1.0.2",
+  "version": "1.0.3",
   "description": "Adblock Radio client SDK",
   "main": "libabr.js",
   "scripts": {

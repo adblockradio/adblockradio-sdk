@@ -29,8 +29,10 @@ if (isNode) {
 	}
 }
 
-var onConnected = function(err) {
+var onConnected = function(err, isConnected) {
 	if (err) return console.log("connection error: " + err);
+
+	if (!isConnected) return console.log("connection lost");
 
 	abrsdk.getSupportedRadios(function(data) {
 		console.log("supported radios: " + JSON.stringify(data));

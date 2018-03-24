@@ -89,11 +89,11 @@ function abrsdk() {
 		}
 		sio.once("reconnect", function() {
 			log.info("reconnected");
-			callback(null);
+			callback(null, true);
 		});
 		sio.once("connect", function() {
 			log.info("connected to API host " + hosts[ihost]);
-			callback(null);
+			callback(null, true);
 		});
 		sio.once("connect_timeout", function() {
 			log.warn("connect timeout, will attempt to reconnect.");
@@ -103,7 +103,11 @@ function abrsdk() {
 			//log.debug("predictions: " + JSON.stringify(data));
 			if (predictionCallback) predictionCallback(data);
 		});
-	}
+		sio.on("disconnect", function() {
+			log.warn("disconnected");
+			callback(null, false);
+		});
+	};
 
 	var connectServer = function(callback) {
 		getServerList(function(err, hosts) {
