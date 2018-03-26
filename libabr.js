@@ -4,7 +4,9 @@
 
 var log = require("./log.js")("abrsdk");
 
-function abrsdk() {
+function abrsdk(customLogger) {
+	log = customLogger || log;
+
 	var APIHOSTS_LIST = "https://www.adblockradio.com/api/servers";
 	var isNode = new Function("try {return this===global;}catch(e){return false;}")(); // detect node or browser env
 
@@ -80,6 +82,7 @@ function abrsdk() {
 
 	var newSocket = function(hosts, ihost, callback) {
 		if (sio && sio.disconnect) {
+			log.info("previous socket will be closed");
 			sio.disconnect();
 		}
 		if (isNode) {
