@@ -47,8 +47,9 @@ If you want to send some feedback with the API, use `sendFeedback`.
 var abrsdk = require("./libabr.js")();
 var token = "change me";
 
-var onConnected = function(err) {
+var onConnectionEvent = function(err, isConnected) {
 	if (err) return console.log("connection error: " + err);
+	if (!isConnected) return console.log("disconnected");
 
 	abrsdk.getSupportedRadios(function(data) {
 		console.log("supported radios: " + JSON.stringify(data));
@@ -90,7 +91,7 @@ var onPrediction = function(predictions) {
 	}
 }
 
-abrsdk.connectServer(onConnected);
+abrsdk.connectServer(onConnectionEvent);
 ```
 
 ## Licence
