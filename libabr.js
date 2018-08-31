@@ -107,8 +107,9 @@ function abrsdk(customLogger) {
 			if (predictionCallback) predictionCallback(data);
 		});
 		sio.on("disconnect", function() {
-			log.warn("disconnected");
+			log.warn("disconnected, will try to reconnect");
 			callback(null, false);
+			newSocket(hosts, (ihost + 1) % hosts.length, callback);
 		});
 	};
 

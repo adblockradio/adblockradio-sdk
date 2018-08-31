@@ -1,11 +1,11 @@
 {
   "name": "adblockradio-sdk",
-  "version": "1.0.4",
+  "version": "1.0.5",
   "description": "Adblock Radio client SDK",
   "main": "libabr.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "build": "browserify demo.js -o bundle.js"
+    "build": "./node_modules/browserify/bin/cmd.js demo.js -o bundle.js"
   },
   "keywords": [
     "ABR",
@@ -22,7 +22,11 @@
     "socket.io-client": "^2.0.4"
   },
   "bugs": {
-    "url": "https://github.com/dest4/adblockradio-sdk/issues"
+    "url": "https://github.com/adblockradio/adblockradio-sdk/issues"
   },
-  "homepage": "https://github.com/dest4/adblockradio-sdk"
+  "homepage": "https://github.com/adblockradio/adblockradio-sdk",
+  "devDependencies": {
+    "browserify": "^16.2.2",
+    "serve": "^10.0.0"
+  }
 }
