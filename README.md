@@ -1,4 +1,4 @@
-# Adblock Radio client SDK
+# (DEPRECATED) Adblock Radio client SDK
 This is a JS Node & browser library to connect to adblockradio.com API servers.
 It provides live information about the nature of broadcast contents: either ads, talk or music.
 It also gives the average volume gain of radio streams so that channel-hopping between stations does not lead to volume variations.

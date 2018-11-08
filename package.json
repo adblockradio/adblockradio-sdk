@@ -16,17 +16,17 @@
   "author": "Alexandre Storelli <a_npm@storelli.fr>",
   "license": "MIT",
   "dependencies": {
-    "chalk": "^2.3.0",
+    "chalk": "^2.4.1",
     "loglevel": "^1.6.1",
-    "loglevel-plugin-prefix": "^0.8.3",
-    "socket.io-client": "^2.0.4"
+    "loglevel-plugin-prefix": "^0.8.4",
+    "socket.io-client": "^2.1.1"
   },
   "bugs": {
     "url": "https://github.com/adblockradio/adblockradio-sdk/issues"
   },
   "homepage": "https://github.com/adblockradio/adblockradio-sdk",
   "devDependencies": {
-    "browserify": "^16.2.2",
-    "serve": "^10.0.0"
+    "browserify": "^16.2.3",
+    "serve": "^10.0.2"
   }
 }
